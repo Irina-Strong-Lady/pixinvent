@@ -23,9 +23,16 @@ time, mark, audio, video {
   height: 102px;
   border-radius: 4px;
   background: rgb(227, 227, 227);
+  cursor: pointer;
 }
 
-.grid-elem-add {
-  width: 147px;
-  height: 32px;
+.chosen-team__subtitle {
+  color: rgb(0, 0, 0);
+  margin-top: 2px;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: left;
+  opacity: 0.4;
 }/*# sourceMappingURL=main.css.map */
