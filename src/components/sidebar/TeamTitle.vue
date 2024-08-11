@@ -1,5 +1,5 @@
 <script setup>
-defineProps({
+const props = defineProps({
   color: {
     type: String,
     required: true
@@ -39,8 +39,8 @@ defineProps({
       </svg>
     </div>
     <div class="col-8 mx-2 mx-md-0 col-md-6">
-      <h5 class="chosen-team__title">{{ team }}</h5>
-      <h5 class="chosen-team__subtitle">{{ choice }}</h5>
+      <h5 class="chosen-team__title">{{ props.team }}</h5>
+      <h5 class="chosen-team__subtitle">{{ props.choice }}</h5>
     </div>
   </div>
 </template>

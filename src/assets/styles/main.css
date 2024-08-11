@@ -18,6 +18,27 @@ time, mark, audio, video {
   font-family: "Inter", sans-serif;
 }
 
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(125, 125, 125);
+  border-radius: 12px;
+  -webkit-transition: all 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(157, 157, 154);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 .grid-elem {
   width: 247px;
   height: 102px;

@@ -1,19 +1,35 @@
 <script setup>
-import { ref } from 'vue';
-import TeamMateInfo from '@/components/sidebar/TeamMateInfo.vue';
-import TeamTitle from '@/components/sidebar/TeamTitle.vue';
-import IconDropDown from '@/components/element/IconDropDown.vue';
-import { useSideBarStore } from '@/stores/sidebar';
+import { ref, computed } from "vue";
+import TeamMateInfo from "@/components/sidebar/TeamMateInfo.vue";
+import TeamTitle from "@/components/sidebar/TeamTitle.vue";
+import IconDropDown from "@/components/element/IconDropDown.vue";
+import { useSideBarStore } from "@/stores/sidebar";
 
 const sideBarStore = useSideBarStore();
 
 const switchToggle = ref(false);
+
 const collapseTeamKit = ref(false);
+
+const search = ref("");
+
+const filterByName = computed(() =>
+  sideBarStore.chosen.filter(
+    (data) =>
+      !search.value || data.name.toLowerCase().includes(search.value.toLowerCase())
+  )
+);
+
+const filterByProfile = computed(() =>
+  sideBarStore.chosen.filter(
+    (data) =>
+      !search.value || data.profile.toLowerCase().includes(search.value.toLowerCase())
+  )
+);
 </script>
 
 <template>
   <div
-    @click="collapseTeamKit = false"
     class="offcanvas offcanvas-end sidebar-main overflow-y-scroll"
     tabindex="-1"
     id="offcanvasRight"
@@ -53,7 +69,12 @@ const collapseTeamKit = ref(false);
         <div class="col-12">
           <div class="mb-3">
             <label class="project-name__label">Название проекта</label>
-            <input type="text" class="form-control input-style" required />
+            <input
+              v-model="sideBarStore.projectName"
+              type="text"
+              class="form-control input-style"
+              required
+            />
           </div>
         </div>
         <div class="col-5"></div>
@@ -63,13 +84,23 @@ const collapseTeamKit = ref(false);
         <div class="col-6">
           <div class="mb-3">
             <label class="project-name__label">Дата начала</label>
-            <input type="date" class="form-control input-style" required />
+            <input
+              v-model="sideBarStore.startDate"
+              type="date"
+              class="form-control input-style"
+              required
+            />
           </div>
         </div>
         <div class="col-6">
           <div class="mb-3">
             <label class="project-name__label">Дата окончания</label>
-            <input type="date" class="form-control input-style" required />
+            <input
+              v-model="sideBarStore.expireDate"
+              type="date"
+              class="form-control input-style"
+              required
+            />
           </div>
         </div>
         <div class="col-5"></div>
@@ -89,7 +120,7 @@ const collapseTeamKit = ref(false);
             <div>
               <el-select
                 v-model="sideBarStore.team"
-                :placeholder="sideBarStore.mutatedTeamsArray[0].team"
+                placeholder="Нажмите"
                 @click.prevent="collapseTeamKit = true"
                 class="input-style"
                 size="small"
@@ -99,7 +130,10 @@ const collapseTeamKit = ref(false);
                   v-for="(item, idx) in sideBarStore.mutatedTeamsArray"
                   :key="item.team"
                   :value="item.team"
-                  @click="sideBarStore.getChosenTeam(idx)"
+                  @click="
+                    sideBarStore.getChosenTeam(idx);
+                    switchToggle = false;
+                  "
                 >
                   <span style="font-size: 12px">{{ item.team }}</span>
                 </el-option>
@@ -214,6 +248,7 @@ const collapseTeamKit = ref(false);
                   <div class="col-md-6 col-2 me-3 me-md-0 team-title">Команды</div>
                   <div class="col-md-6 col-8 ms-4 ms-md-0 pe-1 pe-md-0">
                     <input
+                      v-model="search"
                       type="text"
                       class="form-control input-style__team"
                       placeholder="Поиск по командам"
@@ -233,17 +268,33 @@ const collapseTeamKit = ref(false);
                   :choice="`выбрано ${sideBarStore.checkedItems.length} из ${sideBarStore.chosen.length}`"
                 />
                 <!-- Вертикальный список членов команды -->
-                <TeamMateInfo
-                  v-for="item in sideBarStore.chosen"
-                  :key="item.id"
-                  :color="item.color"
-                  :name="item.name"
-                  :profile="item.profile"
-                />
+                <div v-if="filterByName.length > 0">
+                  <TeamMateInfo
+                    v-for="item in filterByName"
+                    :key="item.id"
+                    :id="item.id"
+                    :color="item.color"
+                    :name="item.name"
+                    :profile="item.profile"
+                    :="switchToggle"
+                  />
+                </div>
+                <div v-else-if="filterByProfile.length > 0">
+                  <TeamMateInfo
+                    v-for="item in filterByProfile"
+                    :key="item.id"
+                    :id="item.id"
+                    :color="item.color"
+                    :name="item.name"
+                    :profile="item.profile"
+                    :="switchToggle"
+                  />
+                </div>
                 <!-- Текстовые поля добавления новых членов в команду -->
                 <div class="row mt-2 ps-2 pe-0 pe-md-3 g-1">
                   <div class="col-md-7 col-7">
                     <input
+                      v-model="sideBarStore.addNewMateName"
                       type="text"
                       class="form-control input-style__team"
                       placeholder="ФИО *"
@@ -252,6 +303,7 @@ const collapseTeamKit = ref(false);
                   </div>
                   <div class="col-md-5 col-5">
                     <input
+                      v-model="sideBarStore.addNewMateProfile"
                       type="text"
                       class="form-control input-style__team"
                       placeholder="Должность *"
@@ -278,6 +330,7 @@ const collapseTeamKit = ref(false);
                   <Transition name="fade">
                     <div v-if="switchToggle" class="col-5 col-md-3 col-md-5 ps-0 ps-md-1">
                       <input
+                        v-model="sideBarStore.addNewMateEmail"
                         type="email"
                         class="form-control input-style__team"
                         placeholder="Почта *"
@@ -289,7 +342,7 @@ const collapseTeamKit = ref(false);
                 <!-- Кнопка добавления нового участника в команду -->
                 <div class="row ps-1">
                   <div class="col-3">
-                    <button @click="$emit('choice')" class="btn-add">
+                    <button @click="sideBarStore.chosenToProject" class="btn-add">
                       <span>Добавить</span>
                     </button>
                   </div>
@@ -297,11 +350,12 @@ const collapseTeamKit = ref(false);
                 </div>
                 <!-- Список добавленных команд -->
                 <TeamTitle
-                  @choice="console.log('Click')"
-                  :color="'#96A5CD'"
-                  :team="'Тестировщики - готовщики'"
-                  :choice="'выбрано 4 из 10'"
-                  class="mt-4"
+                  v-for="(item, idx) in sideBarStore.toProjectTeamsArray"
+                  :key="item.id"
+                  :color="item.color"
+                  :team="item.team"
+                  :choice="item.choice"
+                  :class="idx == 0 ? 'mt-4' : ''"
                 />
               </div>
             </div>
@@ -310,7 +364,13 @@ const collapseTeamKit = ref(false);
       </Transition>
       <div class="row">
         <div class="col-3">
-          <button class="btn-begin mx-0 px-0 my-4">
+          <button
+            class="btn-begin mx-0 px-0 my-4"
+            type="button"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+            @click="collapseTeamKit = false"
+          >
             <span>Начать</span>
           </button>
         </div>

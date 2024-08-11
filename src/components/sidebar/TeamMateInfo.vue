@@ -1,32 +1,40 @@
 <script setup>
-import { ref } from 'vue';
-import { useSideBarStore } from '@/stores/sidebar';
+import { ref } from "vue";
+import { useSideBarStore } from "@/stores/sidebar";
 
 const sideBarStore = useSideBarStore();
 
-defineProps({
+const props = defineProps({
+  id: {
+    type: Number,
+    required: true,
+  },
   color: {
     type: String,
-    required: true
+    required: true,
   },
   name: {
     type: String,
-    required: true
+    required: true,
   },
   profile: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
+  switchToggle: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const switchToggle = ref(false);
+const switchToggle = ref(props.switchToggle);
 </script>
 
 <template>
   <div @click.stop class="row ps-1 justify-content-start">
     <div class="col-1 ms-1">
       <el-switch
-        @input="sideBarStore.checkItem(color, $event)"
+        @input="sideBarStore.checkItem(props.id, props.color, $event)"
         v-model="switchToggle"
         size="small"
         style="
@@ -34,7 +42,7 @@ const switchToggle = ref(false);
           --el-switch-off-color: #fff;
           --el-switch-border-color: #000;
         "
-      />
+      ></el-switch>
     </div>
     <div class="col-1 mx-2 mx-md-0 ps-1">
       <svg
@@ -52,16 +60,16 @@ const switchToggle = ref(false);
           cx="10.000000"
           cy="10.000000"
           r="10.000000"
-          :fill="`${color}`"
+          :fill="`${props.color}`"
           fill-opacity="1.000000"
         />
       </svg>
     </div>
     <div class="col-5 col-md-4 ps-0 my-auto mb-0">
-      <h5 class="team-mate__name">{{ name }}</h5>
+      <h5 class="team-mate__name">{{ props.name }}</h5>
     </div>
     <div class="col-2 col-md-5 mt-auto mb-0 me-0 pe-2 pe-md-0">
-      <h5 class="team-mate__profile">{{ profile }}</h5>
+      <h5 class="team-mate__profile">{{ props.profile }}</h5>
     </div>
   </div>
 </template>
