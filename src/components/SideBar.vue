@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, nextTick, watch } from "vue";
 import TeamMateInfo from "@/components/sidebar/TeamMateInfo.vue";
 import TeamTitle from "@/components/sidebar/TeamTitle.vue";
 import IconDropDown from "@/components/element/IconDropDown.vue";
@@ -13,19 +13,27 @@ const collapseTeamKit = ref(false);
 
 const search = ref("");
 
-const filterByName = computed(() =>
+const filterData = computed(() =>
   sideBarStore.chosen.filter(
     (data) =>
-      !search.value || data.name.toLowerCase().includes(search.value.toLowerCase())
+      !search.value ||
+      data.name.toLowerCase().includes(search.value.toLowerCase()) ||
+      data.profile.toLowerCase().includes(search.value.toLowerCase())
   )
 );
 
-const filterByProfile = computed(() =>
-  sideBarStore.chosen.filter(
-    (data) =>
-      !search.value || data.profile.toLowerCase().includes(search.value.toLowerCase())
-  )
-);
+watch(filterData, () => {
+  updateComponent();
+  sideBarStore.checkedItems.length = 0;
+});
+
+const isRendered = ref(true);
+
+const updateComponent = async () => {
+  isRendered.value = false;
+  await nextTick();
+  isRendered.value = true;
+};
 </script>
 
 <template>
@@ -172,49 +180,6 @@ const filterByProfile = computed(() =>
                 />
               </g>
             </svg>
-            <!-- <svg
-              width="20.000000"
-              height="20.000000"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-            >
-              <desc>Created with Pixso.</desc>
-              <defs />
-              <g opacity="0.800000">
-                <circle
-                  id="Ellipse 3"
-                  cx="10.000000"
-                  cy="10.000000"
-                  r="10.000000"
-                  fill="#9BD9E2"
-                  fill-opacity="1.000000"
-                />
-              </g>
-            </svg>
-            <svg
-              class="mx-1"
-              width="20.000000"
-              height="20.000000"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-            >
-              <desc>Created with Pixso.</desc>
-              <defs />
-              <g opacity="0.800000">
-                <circle
-                  id="Ellipse 4"
-                  cx="10.000000"
-                  cy="10.000000"
-                  r="10.000000"
-                  fill="#E29BDB"
-                  fill-opacity="1.000000"
-                />
-              </g>
-            </svg> -->
             <svg
               width="8.949341"
               height="7.272949"
@@ -268,28 +233,24 @@ const filterByProfile = computed(() =>
                   :choice="`выбрано ${sideBarStore.checkedItems.length} из ${sideBarStore.chosen.length}`"
                 />
                 <!-- Вертикальный список членов команды -->
-                <div v-if="filterByName.length > 0">
-                  <TeamMateInfo
-                    v-for="item in filterByName"
-                    :key="item.id"
-                    :id="item.id"
-                    :color="item.color"
-                    :name="item.name"
-                    :profile="item.profile"
-                    :="switchToggle"
-                  />
-                </div>
-                <div v-else-if="filterByProfile.length > 0">
-                  <TeamMateInfo
-                    v-for="item in filterByProfile"
-                    :key="item.id"
-                    :id="item.id"
-                    :color="item.color"
-                    :name="item.name"
-                    :profile="item.profile"
-                    :="switchToggle"
-                  />
-                </div>
+                <TeamMateInfo
+                  v-if="isRendered"
+                  v-for="item in filterData.length > 0 ? filterData : sideBarStore.chosen"
+                  :key="item.name"
+                  :id="item.id"
+                  :color="item.color"
+                  :name="item.name"
+                  :profile="item.profile"
+                  :status="switchToggle"
+                />
+                <TeamMateInfo
+                  v-if="sideBarStore.addNewMateName !== ''"
+                  :id="sideBarStore.chosen.length + 1"
+                  :color="sideBarStore.randomColor"
+                  :name="sideBarStore.addNewMateName"
+                  :profile="sideBarStore.addNewMateProfile"
+                  :switchToggle="switchToggle"
+                />
                 <!-- Текстовые поля добавления новых членов в команду -->
                 <div class="row mt-2 ps-2 pe-0 pe-md-3 g-1">
                   <div class="col-md-7 col-7">
@@ -342,7 +303,13 @@ const filterByProfile = computed(() =>
                 <!-- Кнопка добавления нового участника в команду -->
                 <div class="row ps-1">
                   <div class="col-3">
-                    <button @click="sideBarStore.chosenToProject" class="btn-add">
+                    <button
+                      @click="
+                        sideBarStore.chosenToProject();
+                        updateComponent();
+                      "
+                      class="btn-add"
+                    >
                       <span>Добавить</span>
                     </button>
                   </div>
@@ -369,7 +336,10 @@ const filterByProfile = computed(() =>
             type="button"
             data-bs-dismiss="offcanvas"
             aria-label="Close"
-            @click="collapseTeamKit = false"
+            @click="
+              collapseTeamKit = false;
+              sideBarStore.resetOnStart();
+            "
           >
             <span>Начать</span>
           </button>

@@ -1,6 +1,8 @@
 <template>
   <nav>
-    <nav class="navbar navbar-expand-lg navbar-light nav-custom bg-main border border-white">
+    <nav
+      class="navbar navbar-expand-lg navbar-light nav-custom bg-main border border-white"
+    >
       <div class="container">
         <div class="brand-custom"></div>
         <div>

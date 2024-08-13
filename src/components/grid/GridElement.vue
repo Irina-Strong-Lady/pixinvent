@@ -1,26 +1,29 @@
 <script setup>
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 
 defineProps({
   element: {
     type: Object,
     required: true,
   },
+  idx: {
+    type: Number,
+    required: true,
+  },
 });
 
 const router = useRouter();
-const route = useRoute();
 
-const toProjectView = (element) =>
+const toProjectView = (element, idx) =>
   router.push({
     name: "project",
     params: { id: element.id },
-    query: { project: element.project, team: element.team },
+    query: { idx: idx },
   });
 </script>
 
 <template>
-  <div @click.capture="toProjectView(element)" class="grid-elem">
+  <div @click.capture="toProjectView(element, idx)" class="grid-elem">
     <div class="my-3">
       <div style="font-size: 12px; font-weight: 600">
         {{ element.project == "" ? "Без названия" : element.project }}

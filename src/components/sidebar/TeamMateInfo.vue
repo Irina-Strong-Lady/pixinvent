@@ -34,8 +34,8 @@ const switchToggle = ref(props.switchToggle);
   <div @click.stop class="row ps-1 justify-content-start">
     <div class="col-1 ms-1">
       <el-switch
-        @input="sideBarStore.checkItem(props.id, props.color, $event)"
         v-model="switchToggle"
+        @input="sideBarStore.checkItem(props.id, props.color, $event)"
         size="small"
         style="
           --el-switch-on-color: #000;

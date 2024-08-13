@@ -2,7 +2,6 @@
 import GridElement from "./GridElement.vue";
 import GridElementInitial from "./GridElementInitial.vue";
 import { useSideBarStore } from "@/stores/sidebar";
-import { projectsArray } from "@/composable";
 
 const sideBarStore = useSideBarStore();
 </script>
@@ -19,9 +18,10 @@ const sideBarStore = useSideBarStore();
         <GridElementInitial />
         <transition-group name="page">
           <GridElement
-            v-for="element in sideBarStore.toProjectTeamsArray"
+            v-for="(element, idx) in sideBarStore.toProjectTeamsArray"
             :key="element.id"
             :element="element"
+            :idx="idx"
           />
         </transition-group>
       </div>

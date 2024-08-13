@@ -43,3 +43,11 @@ export const teamsArray = [
     ]
   }
 ];
+
+export const colors = [
+  { color: '#9C9BE2' },
+  { color: '#9BD9E2' },
+  { color: '#E29BDB' },
+  { color: '#9BE2C0' },
+  { color: '#E2B09B' }
+];

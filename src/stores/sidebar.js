@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { teamsArray } from '@/composable';
+import { teamsArray, colors } from '@/composable';
 
 export const useSideBarStore = defineStore('sideBarStore', () => {
   // Общие переменные
@@ -11,6 +11,7 @@ export const useSideBarStore = defineStore('sideBarStore', () => {
   const addNewMateName = ref('');
   const addNewMateProfile = ref('');
   const addNewMateEmail = ref('');
+  const randomColor = ref('#9C9BE2');
   const mutatedTeamsArray = ref([]);
   const chosen = ref([]);
   const toProjectTeamsArray = ref([]);
@@ -19,11 +20,12 @@ export const useSideBarStore = defineStore('sideBarStore', () => {
   const checkedItems = ref([]);
   const chosenMatesArr = ref([]);
   const addedNewMate = ref(false);
-  const addedMateCounter = ref(0);
   const addedObject = ref({});
 
   // Общие функции
   mutatedTeamsArray.value = teamsArray;
+  randomColor.value = colors[Math.floor(Math.random() * colors.length)].color;
+
   const getChosenTeam = (idx) => (chosen.value = mutatedTeamsArray.value[idx].mate);
 
   const checkItem = (id, color, checked) => {
@@ -38,7 +40,7 @@ export const useSideBarStore = defineStore('sideBarStore', () => {
 
   const chosenToProject = () => {
     addNewMate();
-    let choice = `выбрано ${addedNewMate ? checkedItems.value.length + addedMateCounter.value : checkedItems.value.length} из ${chosen.value.length}`;
+    let choice = `выбрано ${addedNewMate ? checkedItems.value.length : checkedItems.value.length} из ${chosen.value.length}`;
     let chosenTeam = team.value;
     let start = startDate.value;
     let expire = expireDate.value;
@@ -63,40 +65,40 @@ export const useSideBarStore = defineStore('sideBarStore', () => {
     }));
     checkedItems.value.length = 0;
     addedNewMate.value = false;
-    addedMateCounter.value = 0;
   };
 
   // Внутренние функции модуля sidebar.js
   const getChosenMates = () => {
-    let arr = [];
-    chosenMatesArr.value.forEach((el) => arr.push(...chosen.value.filter((elem) => elem.id == el)));
-    if (Object.keys(addedObject.value).length !== 0) {
-      arr.push(addedObject.value);
-    }
+    let arr = chosen.value.filter((el) => chosenMatesArr.value.includes(el.id));
+    chosenMatesArr.value.length = 0;
     return arr;
   };
 
   const addNewMate = () => {
     let id = chosen.value.length + 1;
-    let randomColor = chosen.value[Math.floor(Math.random() * chosen.value.length)].color;
     let name = addNewMateName.value;
     let profile = addNewMateProfile.value;
     let email = addNewMateEmail.value;
     let obj = Object.assign(
       {},
       email !== ''
-        ? { id: id, color: randomColor, name: name, profile: profile, email: email }
-        : { id: id, color: randomColor, name: name, profile: profile }
+        ? { id: id, color: randomColor.value, name: name, profile: profile, email: email }
+        : { id: id, color: randomColor.value, name: name, profile: profile }
     );
-    if (!Object.values(obj).includes('')) {
+    if (!Object.values(obj).includes('') && Object.keys(obj).length !== 0) {
       addedObject.value = obj;
       chosen.value.push(addedObject.value);
       addedNewMate.value = true;
-      addedMateCounter.value += 1;
     }
     addNewMateName.value = '';
     addNewMateProfile.value = '';
     addNewMateEmail.value = '';
+  };
+
+  const resetOnStart = () => {
+    projectName.value = '';
+    startDate.value = '';
+    expireDate.value = '';
   };
 
   return {
@@ -107,6 +109,7 @@ export const useSideBarStore = defineStore('sideBarStore', () => {
     addNewMateName,
     addNewMateProfile,
     addNewMateEmail,
+    randomColor,
     mutatedTeamsArray,
     chosen,
     toProjectTeamsArray,
@@ -114,6 +117,7 @@ export const useSideBarStore = defineStore('sideBarStore', () => {
     getChosenTeam,
     checkItem,
     chosenToProject,
-    addNewMate
+    addNewMate,
+    resetOnStart
   };
 });
