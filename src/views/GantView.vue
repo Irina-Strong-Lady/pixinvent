@@ -1,18 +1,34 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRouter } from "vue-router";
 
-const router = useRouter()
+const router = useRouter();
 </script>
 
 <template>
-  <div class="row p-5 align-items-center justify-content-center">
-    <h2 class="text-center">Это переход на страницу по роуту "/gant"</h2>
-    <button @click="router.push({ name: 'home' })" class="btn w-50 my-5 btn-gant">Вернуться</button>
+  <div class="container d-flex justify-content-center vh-100 vw-100">
+    <div class="mt-5">
+      <div class="border border-3 rounded mt-3 border-custom">
+        <div class="p-2">
+          <h3 class="text-decoration fw-bold">
+            Это переход на страницу по роуту "/gant"
+          </h3>
+        </div>
+      </div>
+      <div class="text-center my-3">
+        <button @click="router.push({ name: 'home' })" class="btn btn-gant">
+          Вернуться
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <style lang="sass" scoped>
+@import '@/assets/styles/main'
 .btn-gant
-  background: rgb(174, 174, 174)
-  color: #FFF
+  background: $bs-black
+  color: $bg-input-color
+.text-decoration
+  font-size: 16px
+  color: $text-main
 </style>

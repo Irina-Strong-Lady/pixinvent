@@ -7,7 +7,7 @@ const sideBarStore = useSideBarStore();
 </script>
 
 <template>
-  <body>
+  <body class="body-bg">
     <div class="container my-4">
       <div
         class="row gx-1 gap-3 text-center justify-content-sm-start justify-content-center"
@@ -60,17 +60,19 @@ const sideBarStore = useSideBarStore();
 <style lang="sass" scoped>
 @import '@/assets/styles/main'
 .title
-  color: rgb(0, 0, 0)
-  font-family: Inter
+  color: $text-main
   font-size: 12px
   font-weight: 500
   line-height: 15px
   letter-spacing: 0%
   text-align: left
 .popup
-  background: $bg-main
+  background: $bg-menu-theme
+  color: $text-main
 .popup-font
   font-size: 14px
+  background: $bs-black
+  color: $bg-input-color
 .page-enter-active,
 .page-leave-active
   transition: 600ms ease all

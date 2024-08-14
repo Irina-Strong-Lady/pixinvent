@@ -15,9 +15,9 @@ export const useSideBarStore = defineStore('sideBarStore', () => {
   const mutatedTeamsArray = ref([]);
   const chosen = ref([]);
   const toProjectTeamsArray = ref([]);
+  const checkedItems = ref([]);
 
   // Внутренние переменные модуля sidebar.js
-  const checkedItems = ref([]);
   const chosenMatesArr = ref([]);
   const addedNewMate = ref(false);
   const addedObject = ref({});

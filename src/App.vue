@@ -1,10 +1,10 @@
 <script setup>
-import { RouterView } from 'vue-router'
-import NavBar from '@/components/NavBar.vue'
+import { RouterView } from "vue-router";
+import NavBar from "@/components/NavBar.vue";
 </script>
 
 <template>
-  <main>
+  <main class="body-bg">
     <NavBar />
     <RouterView v-slot="{ Component, route }">
       <Transition name="page" mode="out-in">

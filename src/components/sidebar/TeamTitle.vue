@@ -2,16 +2,16 @@
 const props = defineProps({
   color: {
     type: String,
-    required: true
+    required: true,
   },
   team: {
     type: String,
-    required: true
+    required: true,
   },
   choice: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 });
 </script>
 
@@ -48,7 +48,7 @@ const props = defineProps({
 <style lang="sass" scoped>
 @import '@/assets/styles/main'
 .chosen-team__title
-  color: rgb(0, 0, 0)
+  color: $bg-input-color
   margin: 0
   padding: 0
   font-size: 12px

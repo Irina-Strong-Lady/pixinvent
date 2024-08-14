@@ -17,32 +17,25 @@ time, mark, audio, video
   line-height: 1.4
   font-family: 'Inter', sans-serif
 
+input::placeholder
+  color: $bg-input-color !important
+
 /* Scrollbar */
 ::-webkit-scrollbar
   width: 10px
   height: 10px
-
 ::-webkit-scrollbar-thumb
   background: rgba(125, 125, 125, 1)
   border-radius: 12px
   transition: all 0.15s ease-in-out
-
 ::-webkit-scrollbar-thumb:hover
   background: rgba(157, 157, 154, 1)
-
 ::-webkit-scrollbar-track
   background: transparent
 
-.grid-elem
-  width: 247px
-  height: 102px
-  border-radius: 4px
-  background: rgb(227, 227, 227)
-  cursor: pointer
-
 //TeamTitle & SideBar common style
 .chosen-team__subtitle
-  color: rgb(0, 0, 0)
+  color: $bg-input-color
   margin-top: 2px
   font-size: 10px
   font-weight: 400
@@ -50,3 +43,40 @@ time, mark, audio, video
   letter-spacing: 0%
   text-align: left
   opacity: 0.4
+
+// Element plus common styles
+:global(.el-select__wrapper)
+  height: 28px
+  background: $bg-input
+:global(.el-select__placeholder)
+  color: $bg-input-color
+:global(.el-select-dropdown__item.is-selected)
+  background: $bg-input
+  font-weight: 600
+:global(.el-select-dropdown__item.is-hovering)
+  background: $bg-input
+  color: $bg-input-color
+:global(.el-select-dropdown__item)
+  &:hover
+    background-color: $bg-input
+:global(.el-popper__arrow)
+  display: none
+:global(.el-select-dropdown__list)
+  background: $bg-input
+:global(.el-popper)
+  border-radius: 0
+:global(.el-scrollbar__wrap)
+  background: $bs-black
+  border-radius: 4px
+
+// Common styles
+.body-bg
+  background: $bs-body-bg
+.grid-elem
+  width: 247px
+  height: 102px
+  border-radius: 4px
+  background: $bs-black
+  cursor: pointer
+
+

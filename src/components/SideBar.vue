@@ -49,14 +49,7 @@ const updateComponent = async () => {
         <div class="col-11">
           <h5 class="title">Создайте новый проект</h5>
         </div>
-        <div class="col-1">
-          <button
-            type="button"
-            class="btn-close text-reset"
-            data-bs-dismiss="offcanvas"
-            aria-label="Close"
-          ></button>
-        </div>
+        <div class="col-1"></div>
       </div>
       <!-- Подзаголовок -->
       <div class="row">
@@ -129,7 +122,7 @@ const updateComponent = async () => {
               <el-select
                 v-model="sideBarStore.team"
                 placeholder="Нажмите"
-                @click.prevent="collapseTeamKit = true"
+                @click.prevent="collapseTeamKit = !collapseTeamKit"
                 class="input-style"
                 size="small"
                 :suffix-icon="IconDropDown"
@@ -138,9 +131,9 @@ const updateComponent = async () => {
                   v-for="(item, idx) in sideBarStore.mutatedTeamsArray"
                   :key="item.team"
                   :value="item.team"
-                  @click="
+                  @click.prevent="
                     sideBarStore.getChosenTeam(idx);
-                    switchToggle = false;
+                    collapseTeamKit = true;
                   "
                 >
                   <span style="font-size: 12px">{{ item.team }}</span>
@@ -156,30 +149,32 @@ const updateComponent = async () => {
         <div class="col-12">
           <h5 class="project-chosen__persons">
             Выбраны в проект:
-            <svg
-              v-for="color in sideBarStore.checkedItems"
-              :key="color.id"
-              class="mx-1"
-              width="20.000000"
-              height="20.000000"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-            >
-              <desc>Created with Pixso.</desc>
-              <defs />
-              <g opacity="0.800000">
-                <circle
-                  id="Ellipse 2"
-                  cx="10.000000"
-                  cy="10.000000"
-                  r="10.000000"
-                  :fill="color"
-                  fill-opacity="1.000000"
-                />
-              </g>
-            </svg>
+            <transition-group name="team" mode="out-in">
+              <svg
+                v-for="color in sideBarStore.checkedItems"
+                :key="color.id"
+                class="mx-1"
+                width="20.000000"
+                height="20.000000"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+              >
+                <desc>Created with Pixso.</desc>
+                <defs />
+                <g opacity="0.800000">
+                  <circle
+                    id="Ellipse 2"
+                    cx="10.000000"
+                    cy="10.000000"
+                    r="10.000000"
+                    :fill="color"
+                    fill-opacity="1.000000"
+                  />
+                </g>
+              </svg>
+            </transition-group>
             <svg
               width="8.949341"
               height="7.272949"
@@ -194,7 +189,7 @@ const updateComponent = async () => {
                 <path
                   id="+1"
                   d="M8.06 0L8.94 0L8.94 7.27L8.06 7.27L8.06 0.92L8.02 0.92L6.24 2.1L6.24 1.2L8.06 0ZM2.74 5.99L1.94 5.99L1.94 4.04L0 4.04L0 3.25L1.94 3.25L1.94 1.3L2.74 1.3L2.74 3.25L4.68 3.25L4.68 4.04L2.74 4.04L2.74 5.99Z"
-                  fill="#000000"
+                  fill="#FFFFFF"
                   fill-opacity="1.000000"
                   fill-rule="evenodd"
                 />
@@ -204,7 +199,7 @@ const updateComponent = async () => {
         </div>
       </div>
       <!-- Общий блок выбора команд с отображением участников -->
-      <Transition name="team" mode="out-in">
+      <transition-group name="team" mode="out-in">
         <div v-if="collapseTeamKit" class="team-kit" @click.stop>
           <el-scrollbar max-height="413px" wrap-class="team-kit" :noresize="true">
             <div class="scrollbar-demo-item">
@@ -230,7 +225,11 @@ const updateComponent = async () => {
                 <TeamTitle
                   :color="'#96A5CD'"
                   :team="sideBarStore.team == '' ? 'Название команды' : sideBarStore.team"
-                  :choice="`выбрано ${sideBarStore.checkedItems.length} из ${sideBarStore.chosen.length}`"
+                  :choice="`выбрано ${sideBarStore.checkedItems.length} из ${
+                    sideBarStore.addNewMateName != ''
+                      ? sideBarStore.chosen.length + 1
+                      : sideBarStore.chosen.length
+                  }`"
                 />
                 <!-- Вертикальный список членов команды -->
                 <TeamMateInfo
@@ -279,9 +278,9 @@ const updateComponent = async () => {
                       v-model="switchToggle"
                       size="small"
                       style="
-                        --el-switch-on-color: #000;
-                        --el-switch-off-color: #fff;
-                        --el-switch-border-color: #000;
+                        --el-switch-on-color: #cfcde4;
+                        --el-switch-off-color: #2f3349e0;
+                        --el-switch-border-color: #cfcde4;
                       "
                     />
                   </div>
@@ -307,6 +306,7 @@ const updateComponent = async () => {
                       @click="
                         sideBarStore.chosenToProject();
                         updateComponent();
+                        sideBarStore.resetOnStart();
                       "
                       class="btn-add"
                     >
@@ -316,19 +316,21 @@ const updateComponent = async () => {
                   <div class="col-9"></div>
                 </div>
                 <!-- Список добавленных команд -->
-                <TeamTitle
-                  v-for="(item, idx) in sideBarStore.toProjectTeamsArray"
-                  :key="item.id"
-                  :color="item.color"
-                  :team="item.team"
-                  :choice="item.choice"
-                  :class="idx == 0 ? 'mt-4' : ''"
-                />
+                <transition-group name="team" mode="out-in">
+                  <TeamTitle
+                    v-for="(item, idx) in sideBarStore.toProjectTeamsArray"
+                    :key="item.id"
+                    :color="item.color"
+                    :team="item.team"
+                    :choice="item.choice"
+                    :class="idx == 0 ? 'mt-4' : ''"
+                  />
+                </transition-group>
               </div>
             </div>
           </el-scrollbar>
         </div>
-      </Transition>
+      </transition-group>
       <div class="row">
         <div class="col-3">
           <button
@@ -344,7 +346,7 @@ const updateComponent = async () => {
             <span>Начать</span>
           </button>
         </div>
-        <div class="col-9"></div>
+        <div class="col-9 mb-0"></div>
       </div>
     </div>
   </div>
@@ -355,8 +357,7 @@ const updateComponent = async () => {
 .sidebar-main
   width: 554px
   height: auto
-  border: solid 1px rgb(236, 236, 236)
-  background: rgb(217, 217, 217)
+  background: $bg-menu-theme
   @media screen and (max-width: 768px)
     width: 454px
 .main
@@ -364,14 +365,14 @@ const updateComponent = async () => {
   @media screen and (max-width: 768px)
     margin-top: 35px
 .title
-  color: rgb(0, 0, 0)
+  color: $text-main
   font-size: 23px
   font-weight: 400
   line-height: 120%
   letter-spacing: 0%
   text-align: left
 .subtitle
-  color: rgb(0, 0, 0)
+  color: $text-main
   font-size: 10px
   font-weight: 400
   line-height: 12px
@@ -379,7 +380,7 @@ const updateComponent = async () => {
   text-align: left
   opacity: 0.7
 .settings-title
-  color: rgb(0, 0, 0)
+  color: $text-main
   font-size: 12px
   font-weight: 500
   line-height: 15px
@@ -388,30 +389,19 @@ const updateComponent = async () => {
   opacity: 0.7
 .input-style
   box-sizing: border-box
-  border: 1px solid rgb(155, 155, 155)
   border-radius: 4px
-  background: rgb(225, 225, 225)
-  color: rgb(23, 23, 23)
+  background: $bg-input
+  color: $bg-input-color
   font-size: 12px
   font-weight: 400
   line-height: 15px
   letter-spacing: 0%
   text-align: left
   opacity: 0.7
-:deep(.el-select__wrapper)
-  height: 28px
-  background: rgb(225, 225, 225)
-:deep(.el-select__wrapper.is-focused)
-  box-shadow: none
-:deep(.el-select__placeholder)
-  color: rgb(23, 23, 23)
-:depp(.el-select-dropdown__item.is-selected)
-  color: rgb(23, 23, 23)
-  font-weight: 400
 .project-name__label
   width: 100%
   margin-bottom: 4px
-  color: rgb(0, 0, 0)
+  color: $text-main
   font-size: 10px
   font-weight: 400
   line-height: 12px
@@ -419,7 +409,7 @@ const updateComponent = async () => {
   text-align: left
   opacity: 0.7
 .project-chosen__persons
-  color: rgb(0, 0, 0)
+  color: $bg-input-color
   font-size: 10px
   font-weight: 400
   line-height: 100%
@@ -429,9 +419,9 @@ const updateComponent = async () => {
 .team-kit
   height: 413px
   box-sizing: border-box
-  border: 1px solid rgb(155, 155, 155)
+  border: 1px solid $text-main
   border-radius: 4px
-  background: rgb(225, 225, 225)
+  background: $bg-menu-theme
   padding-bottom: 15px
 .team-inner
   box-sizing: border-box
@@ -439,7 +429,7 @@ const updateComponent = async () => {
   width: 420px
   height: 291px
 .team-title
-  color: rgb(0, 0, 0)
+  color: $text-main
   font-size: 10px
   font-weight: 400
   line-height: 12px
@@ -448,11 +438,11 @@ const updateComponent = async () => {
 .input-style__team
   height: 20px
   box-sizing: border-box
-  border: 1px solid rgb(155, 155, 155)
+  border: 2px solid $text-main
   border-radius: 4px
-  background: rgb(225, 225, 225)
+  background: $bg-input
   opacity: 0.4
-  color: rgb(23, 23, 23)
+  color: $bg-input-color
   font-size: 10px
   font-weight: 400
   line-height: 12px
@@ -462,15 +452,15 @@ const updateComponent = async () => {
 .team-underline
   height: 0
   margin-top: 8px
-  border: 1px solid rgb(0, 0, 0)
+  border: 1px solid $bg-input-color
   opacity: 0.1
 :deep(.el-switch__core .el-switch__action)
-  border: 1px solid #000
+  border: 1px solid $text-main
   height: 13px
   width: 13px
   left: 0px
 :deep(.el-switch--small .el-switch__core)
-  border: 1px solid #000
+  border: 1px solid $text-main
   border-radius: 8px
   height: 14px
   min-width: 22px
@@ -489,18 +479,18 @@ const updateComponent = async () => {
     padding: 0.275rem 1rem
     border-radius: 3px
     font-size: 9px
-    font-weight: 400
-    background: rgb(174, 174, 174)
-    color: rgb(0, 0, 0)
+    font-weight: 600
+    background: $bg-menu-theme
+    border: 1px solid $bg-input-color
+    color: $text-main
     opacity: 0.9
     line-height: 100%
     letter-spacing: 0%
-    &:hover, &:focus, &:active
-      background: #7c7878
-      transition: all .5s ease-in-out
-  &:hover
-    transform: scale(1.025)
     transition: all .5s ease-in-out
+    &:hover, &:focus, &:active
+      background: $bs-black
+      border: none
+      transform: scale(1.025)
 .btn-begin
   box-shadow: none
   border: none
@@ -509,20 +499,20 @@ const updateComponent = async () => {
     outline: none
     padding: .5rem 1.55rem
     border-radius: 4px
+    border: 1px solid $bg-input-color
     font-size: 12px
-    font-weight: 400
-    background: rgb(174, 174, 174)
-    color: rgb(0, 0, 0)
+    font-weight: 600
+    background: $bg-menu-theme
+    color: $text-main
     opacity: 0.9
     line-height: 100%
     letter-spacing: 0%
     text-align: center
-    &:hover, &:focus, &:active
-      background: #7c7878
-      transition: all .5s ease-in-out
-  &:hover
-    transform: scale(1.025)
     transition: all .5s ease-in-out
+    &:hover, &:focus, &:active
+      background: $bs-black
+      border: none
+      transform: scale(1.025)
 .team-enter-active,
 .team-leave-active
   transition: 600ms ease all

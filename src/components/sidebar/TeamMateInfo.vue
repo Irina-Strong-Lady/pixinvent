@@ -31,16 +31,16 @@ const switchToggle = ref(props.switchToggle);
 </script>
 
 <template>
-  <div @click.stop class="row ps-1 justify-content-start">
+  <div @click.stop class="row px-1 justify-content-start">
     <div class="col-1 ms-1">
       <el-switch
         v-model="switchToggle"
         @input="sideBarStore.checkItem(props.id, props.color, $event)"
         size="small"
         style="
-          --el-switch-on-color: #000;
-          --el-switch-off-color: #fff;
-          --el-switch-border-color: #000;
+          --el-switch-on-color: #cfcde4;
+          --el-switch-off-color: #2f3349e0;
+          --el-switch-border-color: #cfcde4;
         "
       ></el-switch>
     </div>
@@ -77,24 +77,24 @@ const switchToggle = ref(props.switchToggle);
 <style lang="sass" scoped>
 @import '@/assets/styles/main'
 :deep(.el-switch__core .el-switch__action)
-  border: 1px solid #000
+  border: 1px solid $bs-body-bg
   height: 13px
   width: 13px
   left: 0px
 :deep(.el-switch--small .el-switch__core)
-  border: 1px solid #000
+  border: 1px solid $bs-body-bg
   border-radius: 8px
   height: 14px
   min-width: 22px
 .team-mate__name
-  color: rgb(0, 0, 0)
+  color: $text-main
   font-size: 12px
   font-weight: 400
   line-height: 100%
   letter-spacing: 0%
   text-align: left
 .team-mate__profile
-  color: rgb(0, 0, 0)
+  color: $bg-input-color
   font-size: 10px
   font-weight: 400
   line-height: 100%

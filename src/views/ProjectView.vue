@@ -11,9 +11,9 @@ const idx = ref(route.query.idx);
 </script>
 
 <template>
-  <div class="container d-flex align-items-center justify-content-center">
-    <div class="mt-3">
-      <div class="border border-3 rounded mt-3">
+  <div class="container d-flex justify-content-center vh-100 vw-100">
+    <div class="mt-5">
+      <div class="border border-3 rounded mt-3 border-custom">
         <div class="p-2">
           <h3 class="text-decoration fw-bold">
             Название проекта:&nbsp;{{
@@ -51,9 +51,13 @@ const idx = ref(route.query.idx);
 </template>
 
 <style lang="sass" scoped>
+@import '@/assets/styles/main'
 .btn-gant
-  background: rgb(174, 174, 174)
-  color: #FFF
+  background: $bs-black
+  color: $text-main
 .text-decoration
   font-size: 16px
+  color: $text-main
+.border-custom
+  color: $text-main
 </style>
